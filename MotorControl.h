@@ -20,7 +20,7 @@ void courseTimeoutFault() {
 void rudderTimeoutFault() {
   stopMotor();
   digitalWrite(PIN_CLUTCH, LOW);
-  
+
   Auto_active = false;
   Rudder_fault = true;
 
@@ -47,6 +47,11 @@ void autopilotOn() {
     return;
 
   Auto_active = true;
+  Rudder_fault = false;
+  Course_fault = false;
+
+  rudderMoveActive = false;
+  rudderMoveStartMillis = 0;
 
   courseErrorActive = false;
   courseErrorStartMillis = 0;
@@ -57,7 +62,7 @@ void autopilotOn() {
 }
 void autopilotOff() {
   Auto_active = false;
-  Rudder_fault = false;
+ 
 
   rudderMoveActive = false;
   courseErrorActive = false;
