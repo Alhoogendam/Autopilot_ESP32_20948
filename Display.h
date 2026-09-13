@@ -64,9 +64,9 @@ void drawMainScreen() {
   screen.print("SET");
 
   screen.setCursor(145, 58);
-  if (isnan(Set_heading))
+  if (!Auto_active || isnan(Set_heading))
     screen.print("---");
-  else
+else
     screen.print((int)round(Set_heading));
 
   // Heading error.
