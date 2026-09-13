@@ -7,7 +7,7 @@ void courseTimeoutFault() {
   digitalWrite(PIN_CLUTCH, LOW);
 
   Auto_active = false;
-  Rudder_fault = true;
+  Course_fault = true;
 
   rudderMoveActive = false;
   courseErrorActive = false;
@@ -20,8 +20,10 @@ void courseTimeoutFault() {
 void rudderTimeoutFault() {
   stopMotor();
   digitalWrite(PIN_CLUTCH, LOW);
+  
   Auto_active = false;
   Rudder_fault = true;
+
   rudderMoveActive = false;
   beep(200);
   delay(150);

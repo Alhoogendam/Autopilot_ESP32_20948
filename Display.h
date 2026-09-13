@@ -4,7 +4,7 @@
 extern int Heading_error_timeout;
 #endif
 
-// Functies uit V28; inhoudelijk ongewijzigd.
+
 
 void setupVideo() {
   // Current M5GFX contains its own Panel_CVBS implementation.
@@ -66,7 +66,7 @@ void drawMainScreen() {
   screen.setCursor(145, 58);
   if (!Auto_active || isnan(Set_heading))
     screen.print("---");
-else
+  else
     screen.print((int)round(Set_heading));
 
   // Heading error.
@@ -95,12 +95,21 @@ else
   screen.setCursor(163, 154);
 
   if (Rudder_fault)
-    screen.print("ERROR");
+    screen.print("RUDDER ERROR");
   else if (Auto_active)
     screen.print("AUTO");
   else
     screen.print("STBY");
-
+  
+  if (Course_fault)
+    screen.print("COURSE ERROR");
+  else if (Auto_active)
+    screen.print("AUTO");
+  else
+    screen.print("STBY");
+  
+  
+  
   // Movement indicator.
   if (Auto_active && fabs(Heading_error) > Course_window) {
     screen.setCursor(20, 184);
@@ -238,7 +247,7 @@ void drawSettingsScreen() {
     "HELM SPEED",
     "HELM WIN",
     "RUDDER TIMEOUT",
-    "COURSE ERROR TIME",
+    "COURSE ERROR",
     "MIN RUDDER",
     "MAX RUDDER",
     "LOW SPEED",

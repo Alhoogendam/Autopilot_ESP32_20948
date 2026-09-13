@@ -137,6 +137,7 @@ unsigned long lastHeadingMillis = 0;
 unsigned long rudderMoveStartMillis = 0;
 bool rudderMoveActive = false;
 bool Rudder_fault = false;
+bool Course_fault = false;
 const unsigned long HEADING_TIMEOUT = 2000;
 
 // ============================================================
