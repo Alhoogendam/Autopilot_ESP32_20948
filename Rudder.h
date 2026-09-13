@@ -28,8 +28,12 @@ float rudderAdcToDegrees(int adc) {
   float f = (float)(adc - Rudder_center_adc) / (float)(Rudder_star_adc - Rudder_center_adc);
   return Rudder_center_deg + f * (Rudder_star_deg - Rudder_center_deg);
 }
-rudderCalibrationExitRequested = false;
+
+
+
+
 bool waitForOK() {
+  
   rudderCalibrationWaiting = true;
   rx500OK = false;
 
