@@ -13,7 +13,7 @@ void processRX500() {
       return;
 
     if (bits != 24 || protocol != 1) {
-return;
+      return;
     }
 
     rx500LastFrameTime = now;
@@ -32,42 +32,32 @@ return;
       return;
     }
 
-    if (code == RX500_CODE_MINUS1 &&
-        !rx500LongActionDone &&
-        now - rx500PressStart >= RX500_HOLD_TIME_MS) {
-autopilotOff();
+    if (code == RX500_CODE_MINUS1 && !rx500LongActionDone && now - rx500PressStart >= RX500_HOLD_TIME_MS) {
+      autopilotOff();
       rx500LongActionDone = true;
     }
 
-    if (code == RX500_CODE_PLUS1 &&
-        !rx500LongActionDone &&
-        now - rx500PressStart >= RX500_HOLD_TIME_MS) {
-autopilotOn();
+    if (code == RX500_CODE_PLUS1 && !rx500LongActionDone && now - rx500PressStart >= RX500_HOLD_TIME_MS) {
+      autopilotOn();
       rx500LongActionDone = true;
     }
 
-    if (code == RX500_CODE_MINUS10 &&
-        !rx500LongActionDone &&
-        now - rx500PressStart >= RX500_HOLD_TIME_MS) {
+    if (code == RX500_CODE_MINUS10 && !rx500LongActionDone && now - rx500PressStart >= RX500_HOLD_TIME_MS) {
       if (hmiMode == HMI_NORMAL) {
-enterSettings();
+        enterSettings();
         rx500LongActionDone = true;
       }
     }
 
-    if (code == RX500_CODE_PLUS10 &&
-        !rx500LongActionDone &&
-        now - rx500PressStart >= RX500_HOLD_TIME_MS) {
-      if (hmiMode == HMI_SETTINGS_SELECT ||
-          hmiMode == HMI_SETTINGS_EDIT) {
-rx500OK = true;
+    if (code == RX500_CODE_PLUS10 && !rx500LongActionDone && now - rx500PressStart >= RX500_HOLD_TIME_MS) {
+      if (hmiMode == HMI_SETTINGS_SELECT || hmiMode == HMI_SETTINGS_EDIT) {
+        rx500OK = true;
         rx500LongActionDone = true;
       }
     }
   }
 
-  if (rx500PressCode != 0 &&
-      millis() - rx500LastFrameTime >= RX500_RELEASE_TIME_MS) {
+  if (rx500PressCode != 0 && millis() - rx500LastFrameTime >= RX500_RELEASE_TIME_MS) {
     unsigned long code = rx500PressCode;
     rx500PressCode = 0;
 
@@ -75,49 +65,60 @@ rx500OK = true;
       return;
 
     if (code == RX500_CODE_MINUS1) {
-if (hmiMode == HMI_NORMAL) {
+      if (hmiMode == HMI_NORMAL) {
         normalSelection = 1;
         executeNormalFunction();
-      }
-      else {
+      } else {
         leftPressed();
       }
-    }
-    else if (code == RX500_CODE_PLUS1) {
-if (hmiMode == HMI_NORMAL) {
+    } else if (code == RX500_CODE_PLUS1) {
+      if (hmiMode == HMI_NORMAL) {
         normalSelection = 3;
         executeNormalFunction();
-      }
-      else {
+      } else {
         rightPressed();
       }
-    }
-    else if (code == RX500_CODE_MINUS10) {
-if (hmiMode == HMI_NORMAL) {
+    } else if (code == RX500_CODE_MINUS10) {
+      if (hmiMode == HMI_NORMAL) {
         normalSelection = 0;
         executeNormalFunction();
       }
-    }
-    else if (code == RX500_CODE_PLUS10) {
-if (rudderCalibrationWaiting) {
+    } else if (code == RX500_CODE_PLUS10) {
+
+      if (rudderCalibrationWaiting) {
+        unsigned long now = millis();
+
+        // Twee korte +10-drukken tijdens kalibratie = EXIT.
+        if (!rx500LongActionDone && now - lastPlus10ShortRelease <= DOUBLE_CLICK_MS) {
+
+          rudderCalibrationExitRequested = true;
+          rx500OK = true;
+          lastPlus10ShortRelease = 0;
+          return;
+        }
+
+        // Lange +10 tijdens kalibratie = bevestigen.
+        if (rx500LongActionDone) {
+          return;
+        }
+
         rx500OK = true;
-return;
+        lastPlus10ShortRelease = now;
+        return;
       }
 
       if (hmiMode == HMI_NORMAL) {
         normalSelection = 4;
         executeNormalFunction();
-      }
-      else {
+      } else {
         unsigned long now = millis();
 
         if (now - lastPlus10ShortRelease <= DOUBLE_CLICK_MS) {
-hmiMode = HMI_NORMAL;
+          hmiMode = HMI_NORMAL;
           beep(80);
           lastPlus10ShortRelease = 0;
-        }
-        else {
-okPressed();
+        } else {
+          okPressed();
           lastPlus10ShortRelease = now;
         }
       }
@@ -201,8 +202,7 @@ void okPressed() {
   if (hmiMode == HMI_SETTINGS_SELECT) {
     hmiMode = HMI_SETTINGS_EDIT;
     beep(60);
-  }
-  else if (hmiMode == HMI_SETTINGS_EDIT) {
+  } else if (hmiMode == HMI_SETTINGS_EDIT) {
     editSetting();
   }
 }
