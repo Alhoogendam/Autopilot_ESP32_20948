@@ -28,7 +28,7 @@
   Rudder:
     3-point calibration: FULL PORT / CENTER / FULL STARBOARD
     ADC values stored in Preferences/NVS.
-/test wijziging voor github
+/test wijziging voor github test 2
 
 */
 
