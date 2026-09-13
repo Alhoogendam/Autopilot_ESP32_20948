@@ -22,6 +22,12 @@ void courseTimeoutFault() {
   beep(400);
   delay(150);
   beep(200);
+  delay(150);
+  beep(400);
+  delay(150);
+  beep(200);
+  delay(150);
+  beep(400);
 }
 void rudderTimeoutFault() {
   stopMotor();
