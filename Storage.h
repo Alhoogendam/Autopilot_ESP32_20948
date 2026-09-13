@@ -1,4 +1,4 @@
-// Functies uit V28; inhoudelijk ongewijzigd.
+
 
 void setupPreferences() {
   prefs.begin("autopilot", false);
