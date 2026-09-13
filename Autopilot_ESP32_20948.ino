@@ -84,7 +84,7 @@ static M5Canvas screen(&cvbs);
 #define MOTOR_PWM_MAX 255
 
 // ============================================================
-// SETTINGS
+// SETTINGS globals
 // ============================================================
 
 Preferences prefs;
@@ -95,6 +95,7 @@ int Helm_speed = 100;
 float Helm_window = 3.0;
 int Rudder_timeout = 5; // seconds
 int Heading_error_timeout = 30;
+bool rudderCalibrationExitRequested = false;
 float Minimum_rudder = 0.0;
 float Maximum_rudder = 80.0;
 int Low_speed = 60;

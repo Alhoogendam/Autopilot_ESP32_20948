@@ -28,7 +28,7 @@ float rudderAdcToDegrees(int adc) {
   float f = (float)(adc - Rudder_center_adc) / (float)(Rudder_star_adc - Rudder_center_adc);
   return Rudder_center_deg + f * (Rudder_star_deg - Rudder_center_deg);
 }
-bool rudderCalibrationExitRequested = false;
+rudderCalibrationExitRequested = false;
 bool waitForOK() {
   rudderCalibrationWaiting = true;
   rx500OK = false;
@@ -55,7 +55,7 @@ void calibrateRudder() {
   rudderCalibrationExitRequested = false;
 
 
-/-----------------------rudder port calibration -----------------
+//-----------------------rudder port calibration -----------------
   drawCalibrationScreen(
     "MOVE FULL PORT",
     "LONG +10 = OK",
@@ -72,7 +72,7 @@ void calibrateRudder() {
   snprintf(portLine, sizeof(portLine), "PORT   %d", Rudder_port_adc);
   drawCalibrationScreen("PORT VALUE SAVED", portLine, "LONG +10 = OK");
 
-/-----------------------rudder center calibration -----------------
+//-----------------------rudder center calibration -----------------
   drawCalibrationScreen(
     "MOVE CENTER",
     "LONG +10 = OK",
@@ -91,7 +91,7 @@ void calibrateRudder() {
   drawCalibrationScreen("CENTER VALUE SAVED", centerLine, "LONG +10 = OK");
 
 
-/-----------------------rudder starboard calibration -----------------
+//-----------------------rudder starboard calibration -----------------
   drawCalibrationScreen(
     "MOVE FULL STARBOARD",
     "LONG +10 = OK",
@@ -107,7 +107,7 @@ Rudder_star_adc = analogRead(PIN_RUDDER);
   char starLine[32];
   snprintf(starLine, sizeof(starLine), "STBD   %d", Rudder_star_adc);
   drawCalibrationScreen("STARBOARD VALUE SAVED", starLine, "LONG +10 = OK");
-/ -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
   saveRudderCalibration();
 
   char line1[32];
