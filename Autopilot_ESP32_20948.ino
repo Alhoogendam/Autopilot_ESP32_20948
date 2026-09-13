@@ -82,6 +82,7 @@ static M5Canvas screen(&cvbs);
 
 #define MOTOR_PWM_MIN 100
 #define MOTOR_PWM_MAX 255
+#define RUDDER_AVG_SAMPLES 5
 
 // ============================================================
 // SETTINGS globals

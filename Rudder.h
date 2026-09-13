@@ -2,7 +2,28 @@
 
 void readRudder() {
   int adc = analogRead(PIN_RUDDER);
-  Rudder_deg = rudderAdcToDegrees(adc);
+
+  if (!rudderAdcInitialized) {
+    for (int i = 0; i < RUDDER_AVG_SAMPLES; i++)
+      rudderAdcBuffer[i] = adc;
+
+    rudderAdcInitialized = true;
+  }
+
+  rudderAdcBuffer[rudderAdcIndex] = adc;
+  rudderAdcIndex++;
+
+  if (rudderAdcIndex >= RUDDER_AVG_SAMPLES)
+    rudderAdcIndex = 0;
+
+  float adcAverage = 0.0;
+
+  for (int i = 0; i < RUDDER_AVG_SAMPLES; i++)
+    adcAverage += rudderAdcBuffer[i];
+
+  adcAverage /= RUDDER_AVG_SAMPLES;
+
+  Rudder_deg = rudderAdcToDegrees((int)round(adcAverage));
 
   Rudder_deg = constrain(Rudder_deg,
                          Rudder_port_deg,
