@@ -1,7 +1,7 @@
 // V40 HMI preparation: COURSE ERROR TIME is displayed but not used by control logic yet.
 #ifndef HEADING_ERROR_TIMEOUT_HMI_DEFINED
 #define HEADING_ERROR_TIMEOUT_HMI_DEFINED
-int Heading_error_timeout = 5; // seconds; activate in V40 control logic later
+extern int Heading_error_timeout;
 #endif
 
 // Functies uit V28; inhoudelijk ongewijzigd.

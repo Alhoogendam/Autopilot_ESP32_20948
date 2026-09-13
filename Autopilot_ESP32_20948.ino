@@ -94,6 +94,7 @@ float Course_window = 4.0;
 int Helm_speed = 100;
 float Helm_window = 3.0;
 int Rudder_timeout = 5; // seconds
+int Heading_error_timeout = 30;
 float Minimum_rudder = 0.0;
 float Maximum_rudder = 80.0;
 int Low_speed = 60;
