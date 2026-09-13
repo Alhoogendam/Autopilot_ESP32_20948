@@ -1,4 +1,11 @@
-// Functies uit V28; inhoudelijk ongewijzigd.
+
+
+#define RUDDER_AVG_SAMPLES 5
+
+float rudderAdcBuffer[RUDDER_AVG_SAMPLES] = {0};
+int rudderAdcIndex = 0;
+bool rudderAdcInitialized = false;
+
 
 void readRudder() {
   int adc = analogRead(PIN_RUDDER);
