@@ -196,15 +196,7 @@ unsigned long lastOkChange = 0;
 unsigned long lastDisplayUpdate = 0;
 unsigned long lastControlUpdate = 0;
 
-// ============================================================
-// ============================================================
 
-#define N2K_NODE_ADDRESS 23
-
-const unsigned long ReceiveMessages[] PROGMEM = {
-  127250UL,
-  0
-};
 
 // ============================================================
 // FUNCTION PROTOTYPES
