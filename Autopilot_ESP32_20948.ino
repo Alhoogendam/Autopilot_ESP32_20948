@@ -75,11 +75,12 @@ static M5Canvas screen(&cvbs);
 #define PIN_CLUTCH 13
 #define PIN_RX500 12
 
+//----------------Nautnect remote codes -----------------------
 #define RX500_CODE_MINUS1 230821UL
 #define RX500_CODE_PLUS1 880810UL
 #define RX500_CODE_MINUS10 211124UL
 #define RX500_CODE_PLUS10 190728UL
-
+// -------------------------------------------------------------
 #define MOTOR_PWM_MIN 100
 #define MOTOR_PWM_MAX 255
 
