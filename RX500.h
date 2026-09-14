@@ -1,4 +1,4 @@
-// Functies uit V28; inhoudelijk ongewijzigd.
+
 
 void processRX500() {
   if (rx500.available()) {

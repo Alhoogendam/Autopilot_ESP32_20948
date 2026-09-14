@@ -1,4 +1,4 @@
-// Functies uit V28; inhoudelijk ongewijzigd.
+
 unsigned long courseErrorStartMillis = 0;
 bool courseErrorActive = false;
 
