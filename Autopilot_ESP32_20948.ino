@@ -86,7 +86,7 @@ static M5Canvas screen(&cvbs);
 
 
 // ============================================================
-// SETTINGS globals
+// Autopilot settings globals
 // ============================================================
 
 Preferences prefs;
@@ -105,7 +105,9 @@ float Pilot_comp = 0.0;
 
 float Tack_angle = 100.0;
 int Tack_speed = 10;
-
+// ============================================================
+// Rudder settings globals
+// ============================================================
 // Physical rudder angles.
 float Rudder_port_deg = -80.0;
 float Rudder_center_deg = 0.0;
@@ -116,6 +118,10 @@ int Rudder_port_adc = 1000;
 int Rudder_center_adc = 2048;
 int Rudder_star_adc = 3000;
 bool rudderCalibrationWaiting = false;
+
+// ============================================================
+// Motorcontroll settings globals
+// ============================================================
 
 // Change only if motor direction is reversed.
 const int MOTOR_DIR_STARBOARD = HIGH;

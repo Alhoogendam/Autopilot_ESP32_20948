@@ -31,17 +31,17 @@ void processRX500() {
       rx500LongActionDone = false;
       return;
     }
-
+// hold -1 button long    AP = OFF
     if (code == RX500_CODE_MINUS1 && !rx500LongActionDone && now - rx500PressStart >= RX500_HOLD_TIME_MS) {
       autopilotOff();
       rx500LongActionDone = true;
     }
-
+// hold +1 button long    AP = ON
     if (code == RX500_CODE_PLUS1 && !rx500LongActionDone && now - rx500PressStart >= RX500_HOLD_TIME_MS) {
       autopilotOn();
       rx500LongActionDone = true;
     }
-
+// hold +10 button long  = open the settings menu
     if (code == RX500_CODE_MINUS10 && !rx500LongActionDone && now - rx500PressStart >= RX500_HOLD_TIME_MS) {
       if (hmiMode == HMI_NORMAL) {
         enterSettings();

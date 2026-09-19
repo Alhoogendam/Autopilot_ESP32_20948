@@ -39,8 +39,7 @@ void processCompassCommand(const String& command);
 // HARDWARE
 // ============================================================
 
-#define I2C_FREQUENCY 10000
-
+#define I2C_FREQUENCY 100000
 // ------------------------------------------------------------
 // ICM20948
 // ------------------------------------------------------------
@@ -49,6 +48,7 @@ void processCompassCommand(const String& command);
 
 #define SDA_PIN 21
 #define SCL_PIN 22
+
 
 ICM20948_WE myIMU = ICM20948_WE(ICM20948_ADDR);
 
@@ -503,7 +503,7 @@ void updateCompass() {
 
   if (debugEnabled) {
 
-    /*Serial.print(" TIME: ");
+    Serial.print(" TIME: ");
     Serial.print(millis() / 1000.0);
 
     Serial.print(" MAG_X:");
@@ -529,7 +529,7 @@ void updateCompass() {
     Serial.printf("%05.1f", pitch * 180.0 / PI);
 
     Serial.print(" alpha:");
-    Serial.print(alpha, 2);*/
+    Serial.print(alpha, 2);
 
     Serial.print(" RAW:");
     Serial.print(heading);
