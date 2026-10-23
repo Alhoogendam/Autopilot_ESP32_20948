@@ -15,14 +15,21 @@ void loadSettings() {
 
   Minimum_rudder = prefs.getFloat("minrud", 0.0);
   Maximum_rudder = prefs.getFloat("maxrud", 80.0);
+  Rudder_physical_max = prefs.getFloat("rphys", 40.0);
+
+  // Maximum AP rudder may never exceed the physical rudder limit.
+  if (Maximum_rudder > Rudder_physical_max)
+    Maximum_rudder = Rudder_physical_max;
+
   Low_speed = prefs.getInt("lowspeed", 60);
   Pilot_comp = prefs.getFloat("comp", 0.0);
   Tack_angle = prefs.getFloat("tack", 100.0);
   Tack_speed = prefs.getInt("tackspeed", 10);
+  Response_Span = prefs.getFloat("response", 100.0);
 
-  Rudder_port_deg = prefs.getFloat("portdeg", -80.0);
-  Rudder_center_deg = prefs.getFloat("centerdeg", 0.0);
-  Rudder_star_deg = prefs.getFloat("stardeg", 80.0);
+  Rudder_port_deg = -Rudder_physical_max;
+  Rudder_center_deg = 0.0;
+  Rudder_star_deg = Rudder_physical_max;
 }
 
 void saveSettings() {
@@ -35,15 +42,18 @@ void saveSettings() {
   prefs.putInt("ctimeout", Heading_error_timeout);
 
   prefs.putFloat("minrud", Minimum_rudder);
+  // Maximum AP rudder may never exceed the physical rudder limit.
+  if (Maximum_rudder > Rudder_physical_max)
+    Maximum_rudder = Rudder_physical_max;
+
   prefs.putFloat("maxrud", Maximum_rudder);
+  prefs.putFloat("rphys", Rudder_physical_max);
   prefs.putInt("lowspeed", Low_speed);
   prefs.putFloat("comp", Pilot_comp);
   prefs.putFloat("tack", Tack_angle);
   prefs.putInt("tackspeed", Tack_speed);
+  prefs.putFloat("response", Response_Span);
 
-  prefs.putFloat("portdeg", Rudder_port_deg);
-  prefs.putFloat("centerdeg", Rudder_center_deg);
-  prefs.putFloat("stardeg", Rudder_star_deg);
 }
 void restoreFactorySettings() {
   Pilot_gain = 100.0;
@@ -52,12 +62,22 @@ void restoreFactorySettings() {
   Helm_window = 3.0;
   Minimum_rudder = 0.0;
   Maximum_rudder = 80.0;
+  Rudder_physical_max = 40.0;
+
+  // Maximum AP rudder may never exceed the physical rudder limit.
+  if (Maximum_rudder > Rudder_physical_max)
+    Maximum_rudder = Rudder_physical_max;
+  
+  Rudder_port_deg = -Rudder_physical_max;
+  Rudder_center_deg = 0.0;
+  Rudder_star_deg = Rudder_physical_max;
   Low_speed = 60;
   Pilot_comp = 0.0;
   Tack_angle = 100.0;
   Tack_speed = 10;
   Rudder_timeout = 5;
   Heading_error_timeout = 30;
+  Response_Span = 160;
 
   saveSettings();
 }

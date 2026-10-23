@@ -13,20 +13,20 @@ void courseTimeoutFault() {
   courseErrorActive = false;
   courseErrorStartMillis = 0;
 
-  beep(200);
-  delay(150);
+  beep(50);
+
   beep(400);
-  delay(150);
-  beep(200);
-  delay(150);
+
+  beep(50);
+
   beep(400);
-  delay(150);
-  beep(200);
-  delay(150);
+
+  beep(50);
+
   beep(400);
-  delay(150);
-  beep(200);
-  delay(150);
+
+  beep(50);
+
   beep(400);
 }
 void rudderTimeoutFault() {
@@ -38,7 +38,7 @@ void rudderTimeoutFault() {
 
   rudderMoveActive = false;
   beep(200);
-  delay(150);
+
   beep(200);
 }
 
@@ -54,11 +54,43 @@ void setCurrentHeading() {
 
 void autopilotOn() {
 
-  // AP may not start without an explicitly assigned SET heading.
-  if (!Heading_valid || isnan(Set_heading))
+
+
+  if (!Heading_valid)
     return;
 
+  // ============================================================
+  // KOERS INSTELLEN BIJ INSCHAKELEN AP
+  // ============================================================
+  if (currentNavMode == NAV_MODE_OPENCPN) {
+    if (isOpenCPNValid()) {
+      Set_heading = RX_EData.RX_targetHeading;
+    } else {
+      // Veiligheid: gebruik gefilterde Heading of laatste bekende echte koers
+      Set_heading = (Heading >= 0.0f && Heading < 360.0f) ? Heading : lastValidHeading;
+      currentNavMode = NAV_MODE_COMPASS;
+      beep(300);
+    }
+  } else {
+    // NAV_MODE_COMPASS: Huidige kompaskoers overnemen, maar STRIKT gefilterd!
+    if (Heading >= 0.0f && Heading < 360.0f) {
+      Set_heading = Heading;
+    } else {
+      Set_heading = lastValidHeading;
+    }
+  }
+
+  // Absolute noodstop voor als er toch een 512 of fout doorheen glipt
+  if (Set_heading < 0.0f || Set_heading >= 360.0f || isnan(Set_heading)) {
+    Set_heading = lastValidHeading;
+  }
+
   Auto_active = true;
+  tack_error = false;
+  // ... (rest van de functie blijft gelijk)
+  Auto_active = true;
+  tack_error = false;
+
   Rudder_fault = false;
   Course_fault = false;
 
@@ -70,11 +102,21 @@ void autopilotOn() {
 
   digitalWrite(PIN_CLUTCH, HIGH);
 
+  calculateHeadingError();  // Herbereken direct de stuurfout
   beep(50);
 }
+
+
+
+
+
 void autopilotOff() {
   Auto_active = false;
- 
+
+  tack_port = false;
+  tack_starboard = false;
+  tack_error = false;
+
 
   rudderMoveActive = false;
   courseErrorActive = false;
@@ -83,14 +125,22 @@ void autopilotOff() {
   // Motor OFF first, clutch OFF second.
   stopMotor();
   digitalWrite(PIN_CLUTCH, LOW);
-
-  beep(80);
 }
+
+
+
+int lastRpwmVal = -1;
+int lastLpwmVal = -1;
 
 void stopMotor() {
-  ledcWrite(PIN_MOTOR_RPWM, 0);
-  ledcWrite(PIN_MOTOR_LPWM, 0);
+  if (lastRpwmVal != 0 || lastLpwmVal != 0) {
+    ledcWrite(PIN_MOTOR_RPWM, 0);
+    ledcWrite(PIN_MOTOR_LPWM, 0);
+    lastRpwmVal = 0;
+    lastLpwmVal = 0;
+  }
 }
+
 
 void setMotor(int direction, int pwm) {
   if (!Auto_active || !Heading_valid) {
@@ -106,19 +156,31 @@ void setMotor(int direction, int pwm) {
     rudderMoveStartMillis = millis();
   }
 
+
   if (Rudder_timeout > 0 && millis() - rudderMoveStartMillis >= (unsigned long)Rudder_timeout * 1000UL) {
     rudderTimeoutFault();
     return;
   }
 
+  // Bepaal de doelen op basis van de richting
+  int targetRpwm = 0;
+  int targetLpwm = 0;
+
   if (direction == MOTOR_DIR_STARBOARD) {
-    // Only RPWM is active.
-    ledcWrite(PIN_MOTOR_LPWM, 0);
-    ledcWrite(PIN_MOTOR_RPWM, pwm);
+    targetLpwm = 0;
+    targetRpwm = pwm;
   } else {
-    // Only LPWM is active.
-    ledcWrite(PIN_MOTOR_RPWM, 0);
-    ledcWrite(PIN_MOTOR_LPWM, pwm);
+    targetRpwm = 0;
+    targetLpwm = pwm;
+  }
+
+  // Alleen naar de hardware schrijven als de waarden écht veranderd zijn (Dirty Check)
+  if (targetRpwm != lastRpwmVal || targetLpwm != lastLpwmVal) {
+    ledcWrite(PIN_MOTOR_LPWM, targetLpwm);
+    ledcWrite(PIN_MOTOR_RPWM, targetRpwm);
+
+    lastLpwmVal = targetLpwm;
+    lastRpwmVal = targetRpwm;
   }
 }
 
@@ -161,7 +223,7 @@ void controlAutopilot() {
   }
 
   // The compass error determines the theoretical rudder angle.
-  // Pilot_comp adds a fixed mechanical correction to that angle.
+  // Pilot_comp adds a fixed mechanical backlash correction .
   Target_rudder_deg = constrain(
     Heading_error + Pilot_comp,
     -Maximum_rudder,
@@ -179,11 +241,17 @@ void controlAutopilot() {
     return;
   }
 
+
+  // Reken percentages (0-100) om naar echte 8-bit PWM waarden (0-255)
+  int effectiveMin = (Low_speed * 255) / 100;
+  int effectiveMax = (Helm_speed * 255) / 100;
+
   float gainFactor = Pilot_gain / 100.0;
 
-  int pwm = MOTOR_PWM_MIN + (int)((rudderErrorAbs / 160.0) * (MOTOR_PWM_MAX - MOTOR_PWM_MIN) * gainFactor);
+  int pwm = effectiveMin + (int)((rudderErrorAbs / Response_Span) * (effectiveMax - effectiveMin) * gainFactor);
 
-  pwm = constrain(pwm, MOTOR_PWM_MIN, MOTOR_PWM_MAX);
+  pwm = constrain(pwm, effectiveMin, effectiveMax);
+
 
   if (rudderError > 0)
     setMotor(MOTOR_DIR_STARBOARD, pwm);
